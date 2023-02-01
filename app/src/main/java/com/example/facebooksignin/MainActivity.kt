@@ -2,10 +2,12 @@ package com.example.facebooksignin
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.facebooksignin.databinding.ActivityMainBinding
+import com.facebook.AccessToken
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
 import com.facebook.FacebookException
@@ -23,8 +25,16 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val accessToken = AccessToken.getCurrentAccessToken()
+        val isLoggedIn = accessToken != null && !accessToken.isExpired
+//        if (isLoggedIn){
+//            startActivity(Intent(this,MainActivity2::class.java))
+//        }
 
         callbackManager = CallbackManager.Factory.create()
+
+
+
 
         LoginManager.getInstance().registerCallback(callbackManager, object :FacebookCallback<LoginResult>{
             override fun onCancel() {
@@ -37,6 +47,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onSuccess(result: LoginResult) {
                 Toast.makeText(this@MainActivity,"Login SuccessFully: ${result.accessToken}",Toast.LENGTH_LONG).show()
+                Log.d("waqar","${result.accessToken}")
                 startActivity(Intent(this@MainActivity,MainActivity2::class.java))
             }
 
@@ -48,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    private val signInFacebook=registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+    private val signInFacebook=registerForActivityResult(ActivityResultContracts.RequestPermission()){
 //        callbackManager.onActivityResult()
     }
 
